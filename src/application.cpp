@@ -53,7 +53,25 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 		node_list.push_back(node);
 
 		// TODO: create all the volumes to use in the app
-		// ...
+		//new VolumeNode(autoset a cube for the mesh of the class)
+		SceneNode* volumenode = new SceneNode("Visible node");
+		Mesh* mesh;
+		mesh->createCube();
+		volumenode->mesh = mesh;
+		//load Volume from dataset
+		Volume* volume;
+		volume->loadPVM("Orange.pvm");
+		//create Texture from Value
+		Texture* texture;
+		texture->create3DFromVolume(volume, GL_REPEAT);
+		//create Material from Texture
+		VolumeMaterial* volumematerial = new VolumeMaterial();
+		volumematerial->texture = texture;
+		//set material of  the VolumeNode as the material created
+		volumenode->material = volumematerial;
+		//check that this is created node is used in the main render call
+		node_list.push_back(node);
+
 	}
 	
 	//hide the cursor
@@ -224,4 +242,6 @@ void Application::renderInMenu() {
 
 	ImGui::Checkbox("Render debug", &render_debug);
 	ImGui::Checkbox("Wireframe", &render_wireframe);
+	//ImGui::DragFloat("Step Vector lenght", &render_step_vector, 0.1f);
+	//ImGui::DragFloat("Brightness", &brightness, 0.1f);
 }
