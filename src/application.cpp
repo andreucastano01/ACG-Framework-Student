@@ -55,14 +55,14 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 		// TODO: create all the volumes to use in the app
 		//new VolumeNode(autoset a cube for the mesh of the class)
 		SceneNode* volumenode = new SceneNode("Visible node");
-		Mesh* mesh;
+		Mesh* mesh = new Mesh();
 		mesh->createCube();
 		volumenode->mesh = mesh;
 		//load Volume from dataset
 		Volume* volume;
 		volume->loadPVM("Orange.pvm");
 		//create Texture from Value
-		Texture* texture;
+		Texture* texture = new Texture();
 		texture->create3DFromVolume(volume, GL_REPEAT);
 		//create Material from Texture
 		VolumeMaterial* volumematerial = new VolumeMaterial();
