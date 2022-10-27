@@ -63,4 +63,5 @@ void SceneNode::renderInMenu()
 
 		ImGui::TreePop();
 	}
+	
 }

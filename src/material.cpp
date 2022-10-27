@@ -53,7 +53,8 @@ void StandardMaterial::renderInMenu()
 VolumeMaterial::VolumeMaterial()
 {
 	color = vec4(1.f, 1.f, 1.f, 1.f);
-	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/flat.fs");
+	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/volumetric.fs");
+	step_length = 0.1f;
 }
 
 VolumeMaterial::~VolumeMaterial()
@@ -63,6 +64,15 @@ VolumeMaterial::~VolumeMaterial()
 
 void VolumeMaterial::setUniforms(Camera* camera, Matrix44 model)
 {
+	//upload node uniforms
+	shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
+	shader->setUniform("u_camera_position", camera->eye);
+	shader->setUniform("u_model", model);
+	shader->setUniform("u_time", Application::instance->time);
+	shader->setUniform("u_color", color);
+	shader->setUniform("ray_step", step_length);
+	if (texture)
+		shader->setUniform("u_texture", texture);
 }
 
 void VolumeMaterial::render(Mesh* mesh, Matrix44 model, Camera* camera)
@@ -85,6 +95,8 @@ void VolumeMaterial::render(Mesh* mesh, Matrix44 model, Camera* camera)
 
 void VolumeMaterial::renderInMenu()
 {
+	ImGui::DragFloat("Step Length", &step_length, 0.1f);
+	//ImGui::DragFloat("Brightness", &brightness, 0.1f);
 }
 
 WireframeMaterial::WireframeMaterial()

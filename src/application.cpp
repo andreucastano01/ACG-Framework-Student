@@ -11,6 +11,7 @@
 #include "extra/imgui/imgui.h"
 #include "extra/imgui/imgui_impl_sdl.h"
 #include "extra/imgui/imgui_impl_opengl3.h"
+#include "material.h"
 
 #include <cmath>
 
@@ -50,17 +51,17 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 		StandardMaterial* mat = new StandardMaterial();
 		node->material = mat;
 		mat->shader = Shader::Get("data/shaders/basic.vs", "data/shaders/normal.fs");
-		node_list.push_back(node);
+		//node_list.push_back(node);
 
 		// TODO: create all the volumes to use in the app
 		//new VolumeNode(autoset a cube for the mesh of the class)
-		SceneNode* volumenode = new SceneNode("Visible node");
+		SceneNode* volumenode = new SceneNode("Volume");
 		Mesh* mesh = new Mesh();
 		mesh->createCube();
 		volumenode->mesh = mesh;
 		//load Volume from dataset
-		Volume* volume;
-		volume->loadPVM("Orange.pvm");
+		Volume* volume = new Volume();
+		volume->loadPVM("data/volumes/Orange.pvm");
 		//create Texture from Value
 		Texture* texture = new Texture();
 		texture->create3DFromVolume(volume, GL_REPEAT);
@@ -70,7 +71,7 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 		//set material of  the VolumeNode as the material created
 		volumenode->material = volumematerial;
 		//check that this is created node is used in the main render call
-		node_list.push_back(node);
+		node_list.push_back(volumenode);
 
 	}
 	
@@ -242,6 +243,4 @@ void Application::renderInMenu() {
 
 	ImGui::Checkbox("Render debug", &render_debug);
 	ImGui::Checkbox("Wireframe", &render_wireframe);
-	//ImGui::DragFloat("Step Vector lenght", &render_step_vector, 0.1f);
-	//ImGui::DragFloat("Brightness", &brightness, 0.1f);
 }
