@@ -39,8 +39,6 @@ public:
 	void setUniforms(Camera* camera, Matrix44 model);
 	void render(Mesh* mesh, Matrix44 model, Camera* camera);
 	void renderInMenu();
-
-	float step_length;
 };
 
 class WireframeMaterial : public StandardMaterial {

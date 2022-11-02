@@ -27,6 +27,8 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	instance = this;
 	must_exit = false;
 	render_debug = true;
+	step_length = 0.1f;
+	brightness = 0.1f;
 
 	fps = 0;
 	frame = 0;
@@ -243,4 +245,6 @@ void Application::renderInMenu() {
 
 	ImGui::Checkbox("Render debug", &render_debug);
 	ImGui::Checkbox("Wireframe", &render_wireframe);
+	ImGui::SliderFloat("Step Length", &step_length, 0.01f, 0.2f);
+	ImGui::SliderFloat("Brightness", &brightness, 0.01f, 0.2f);
 }

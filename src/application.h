@@ -30,6 +30,8 @@ public:
 	int fps;
 	bool must_exit;
 	bool render_debug;
+	float step_length;
+	float brightness;
 
 	// some vars
 	static Camera* camera; //our GLOBAL camera
