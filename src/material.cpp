@@ -63,6 +63,9 @@ VolumeMaterial::~VolumeMaterial()
 
 void VolumeMaterial::setUniforms(Camera* camera, Matrix44 model)
 {
+	Matrix44 aux_model;
+	aux_model = model;
+	aux_model.inverse();
 	//upload node uniforms
 	shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
 	shader->setUniform("u_camera_position", camera->eye);
