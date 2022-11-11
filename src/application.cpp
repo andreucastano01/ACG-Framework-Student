@@ -28,7 +28,7 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	must_exit = false;
 	render_debug = true;
 	step_length = 0.1f;
-	brightness = 0.25f;
+	brightness = 1.65f;
 
 	fps = 0;
 	frame = 0;
@@ -63,7 +63,7 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 		volumenode->mesh = mesh;
 		//load Volume from dataset
 		Volume* volume = new Volume();
-		volume->loadPVM("data/volumes/Orange.pvm");
+		volume->loadPVM("data/volumes/CT-Abdomen.pvm");
 		//create Texture from Value
 		Texture* texture = new Texture();
 		texture->create3DFromVolume(volume, GL_REPEAT);
