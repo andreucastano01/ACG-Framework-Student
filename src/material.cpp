@@ -76,12 +76,21 @@ void VolumeMaterial::setUniforms(Camera* camera, Matrix44 model)
 	shader->setUniform("u_color", color);
 	shader->setUniform("ray_step", Application::instance->step_length);
 	shader->setUniform("brightness", Application::instance->brightness);
-	if (texture)
-		shader->setUniform("u_texture", texture);
+	if (texture) {
+		shader->setUniform("u_texture", texture, 1);
+		shader->setUniform("texture_width", texture->width);
+	}
+	if (Application::instance->LUTtexture)
+		shader->setUniform("LUT_texture", Application::instance->LUTtexture, 2);
+	shader->setUniform("u_plane", Application::instance->plane);
 }
 
 void VolumeMaterial::render(Mesh* mesh, Matrix44 model, Camera* camera)
 {
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	if (mesh && shader)
 	{
 		//enable shader

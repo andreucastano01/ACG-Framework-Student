@@ -27,8 +27,10 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	instance = this;
 	must_exit = false;
 	render_debug = true;
-	step_length = 0.1f;
-	brightness = 1.65f;
+	volums = CTABDOMEN;
+	step_length = 0.01f;
+	brightness = 4.65f;
+	plane = Vector4(1, 1, 1, 1);
 
 	fps = 0;
 	frame = 0;
@@ -45,19 +47,19 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	camera->lookAt(Vector3(5.f, 5.f, 5.f), Vector3(0.f, 0.0f, 0.f), Vector3(0.f, 1.f, 0.f));
 	camera->setPerspective(45.f, window_width/(float)window_height, 0.1f, 10000.f); //set the projection, we want to be perspective
 
-	{
-		// EXAMPLE OF HOW TO CREATE A SCENE NODE
-		SceneNode* node = new SceneNode("Visible node");
-		node->mesh = Mesh::Get("data/meshes/sphere.obj.mbin");
-		node->model.scale(1, 1, 1);
-		StandardMaterial* mat = new StandardMaterial();
-		node->material = mat;
-		mat->shader = Shader::Get("data/shaders/basic.vs", "data/shaders/normal.fs");
-		//node_list.push_back(node);
+	// EXAMPLE OF HOW TO CREATE A SCENE NODE
+	SceneNode* node = new SceneNode("Visible node");
+	node->mesh = Mesh::Get("data/meshes/sphere.obj.mbin");
+	node->model.scale(1, 1, 1);
+	StandardMaterial* mat = new StandardMaterial();
+	node->material = mat;
+	mat->shader = Shader::Get("data/shaders/basic.vs", "data/shaders/normal.fs");
+	//node_list.push_back(node);
 
-		// TODO: create all the volumes to use in the app
-		//new VolumeNode(autoset a cube for the mesh of the class)
-		SceneNode* volumenode = new SceneNode("Volume");
+	// TODO: create all the volumes to use in the app
+	//new VolumeNode(autoset a cube for the mesh of the class)
+	if (volums == CTABDOMEN) {
+		SceneNode* volumenode = new SceneNode("CTABDOMEN");
 		Mesh* mesh = new Mesh();
 		mesh->createCube();
 		volumenode->mesh = mesh;
@@ -74,9 +76,30 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 		volumenode->material = volumematerial;
 		//check that this is created node is used in the main render call
 		node_list.push_back(volumenode);
-
 	}
-	
+	if (volums == ORANGE) {
+		SceneNode* volumenode = new SceneNode("Orange");
+		Mesh* mesh = new Mesh();
+		mesh->createCube();
+		volumenode->mesh = mesh;
+		//load Volume from dataset
+		Volume* volume = new Volume();
+		volume->loadPVM("data/volumes/Orange.pvm");
+		//create Texture from Value
+		Texture* texture = new Texture();
+		texture->create3DFromVolume(volume, GL_REPEAT);
+		//create Material from Texture
+		VolumeMaterial* volumematerial = new VolumeMaterial();
+		volumematerial->texture = texture;
+		//set material of  the VolumeNode as the material created
+		volumenode->material = volumematerial;
+		//check that this is created node is used in the main render call
+		node_list.push_back(volumenode);
+	}
+
+	//LUTTexture
+	LUTtexture = new Texture(window_width, window_height, GL_RGB, GL_FLOAT, false);
+	LUTtexture->load("data/images/aaa.png");
 	//hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
 }
@@ -245,6 +268,8 @@ void Application::renderInMenu() {
 
 	ImGui::Checkbox("Render debug", &render_debug);
 	ImGui::Checkbox("Wireframe", &render_wireframe);
+	ImGui::Combo("Volums", (int*)&volums, "CTABDOMEN\0ORANGE", 2);
 	ImGui::SliderFloat("Step Length", &step_length, 0.01f, 0.2f);
-	ImGui::SliderFloat("Brightness", &brightness, 0.01f, 0.3f);
+	ImGui::SliderFloat("Brightness", &brightness, 0.01f, 5.f);
+	ImGui::DragFloat4("plane", (float*)&plane);
 }

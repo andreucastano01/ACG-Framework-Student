@@ -32,6 +32,16 @@ public:
 	bool render_debug;
 	float step_length;
 	float brightness;
+	Vector4 plane;
+
+	Texture* LUTtexture = NULL;
+
+	enum eVolums {
+		CTABDOMEN,
+		ORANGE
+	};
+
+	eVolums volums;
 
 	// some vars
 	static Camera* camera; //our GLOBAL camera
