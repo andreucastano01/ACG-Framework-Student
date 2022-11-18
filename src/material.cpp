@@ -83,6 +83,13 @@ void VolumeMaterial::setUniforms(Camera* camera, Matrix44 model)
 	if (Application::instance->LUTtexture)
 		shader->setUniform("LUT_texture", Application::instance->LUTtexture, 2);
 	shader->setUniform("u_plane", Application::instance->plane);
+	
+	if (!Application::instance->jittering) shader->setUniform1("u_have_jittering", 0);
+	else {
+		shader->setUniform1("u_have_jittering", 1);
+		if(Application::instance->jitteringm == 1) shader->setUniform1("u_have_jittering_2", 1);
+		else shader->setUniform1("u_have_jittering_2", 0);
+	}
 }
 
 void VolumeMaterial::render(Mesh* mesh, Matrix44 model, Camera* camera)

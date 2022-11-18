@@ -33,6 +33,13 @@ public:
 	float step_length;
 	float brightness;
 	Vector4 plane;
+	float iso_threshold;
+	float h_value;
+
+	bool jittering;
+	bool TF;
+	bool VC;
+	bool isosurface;
 
 	Texture* LUTtexture = NULL;
 
@@ -42,7 +49,13 @@ public:
 		TEA
 	};
 
+	enum eJittering {
+		METODO1,
+		METODO2
+	};
+
 	eVolums volums;
+	eJittering jitteringm;
 
 	// some vars
 	static Camera* camera; //our GLOBAL camera

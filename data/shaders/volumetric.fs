@@ -6,6 +6,8 @@ uniform float brightness;
 uniform mat4 u_inverse_model;
 uniform float texture_width;
 uniform vec4 u_plane;
+uniform int u_have_jittering;
+uniform int u_have_jittering_2;
 
 varying vec3 v_position;
 varying vec3 v_world_position;
@@ -40,41 +42,46 @@ float noise (in vec2 st) {
 //y el sample_pos tambien tenemos que cambiar coordenadas, anadir el otro early termination
 void main()
 {
-    vec4 world_position = u_inverse_model * vec4(v_world_position, 1.0);
     //Creamos variables y el rayo
     vec4 final_color = vec4(0.0);
     vec3 ray_start = u_camera_position;
     vec3 sample_pos = v_position;
-    vec3 samplepos01 = sample_pos * 0.5 + 0.5;
-    
-    //Jittering
-    //ray_start += noise(v_uv);
-    vec2 offset = v_uv / texture_width;
-    ray_start += offset;
 
-	vec3 ray_dir = (world_position.xyz - ray_start);
+    //Jittering
+    if(u_have_jittering == 1){
+        if(u_have_jittering_2 == 1){
+            vec2 offset = v_uv / texture_width;
+            ray_start += offset; 
+        } else{
+            ray_start += noise(v_uv);
+        }
+    }
+    
+	vec3 ray_dir = (sample_pos - ray_start);
     ray_dir = normalize(ray_dir);
     vec3 stepLength = ray_dir * ray_step;
+    
 
     //Sampleamos cada punto
     for(int i = 0; i < SAMPLES; i++){
+        vec3 samplepos01 = sample_pos * 0.5 + 0.5;
         float d = texture(u_texture, samplepos01).x;
         vec4 sample_color = vec4(d,1-d,0,d*d);
 
         //Calculamos color  
-        if(u_plane.x*samplepos01.x + u_plane.y*samplepos01.y + u_plane.z*samplepos01.z + u_plane.w > 0)
+        if(u_plane.x*sample_pos.x + u_plane.y*sample_pos.y + u_plane.z*sample_pos.z + u_plane.w > 0)
             final_color += stepLength * (1.0 - final_color.a) * sample_color;
 
         //Intento de transfer function
-        //vec3 c = texture(LUT_texture, final_color.a).xyz;
+        //vec3 c = texture(LUT_texture, d).xyz;
         //vec4 color = vec4(c, final_color.a);
         //final_color = color;
 
         //Pasamos al siguiente sample
-        samplepos01 += stepLength;
+        sample_pos += stepLength;
         //Early termination
         if(final_color.a >= 1) break;
-        if(samplepos01.x > 1 || samplepos01.x < 0 || samplepos01.y > 1 || samplepos01.y < 0 || samplepos01.z > 1 || samplepos01.z < 0) break;
+        if(sample_pos.x > 1 || sample_pos.x < -1 || sample_pos.y > 1 || sample_pos.y < -1 || sample_pos.z > 1 || sample_pos.z < -1) break;
     }
     //Anades brightness
 	gl_FragColor = final_color * brightness;

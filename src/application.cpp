@@ -28,9 +28,16 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	must_exit = false;
 	render_debug = true;
 	volums = CTABDOMEN;
+	jitteringm = METODO1;
 	step_length = 0.01f;
-	brightness = 4.65f;
+	brightness = 2.65f;
 	plane = Vector4(1, 1, 1, 1);
+	iso_threshold = 0.2f;
+	h_value = 0.01f;
+	jittering = false;
+	TF = false;
+	VC = false;
+	isosurface = false;
 
 	fps = 0;
 	frame = 0;
@@ -281,8 +288,23 @@ void Application::renderInMenu() {
 
 	ImGui::Checkbox("Render debug", &render_debug);
 	ImGui::Checkbox("Wireframe", &render_wireframe);
-	ImGui::Combo("Volums", (int*)&volums, "CTABDOMEN\0ORANGE\0TEA", 2);
 	ImGui::SliderFloat("Step Length", &step_length, 0.01f, 0.2f);
 	ImGui::SliderFloat("Brightness", &brightness, 0.01f, 5.f);
-	ImGui::DragFloat4("plane", (float*)&plane);
+	if (ImGui::TreeNode("Jittering")) {
+		ImGui::Checkbox("Jittering", &jittering);
+		ImGui::Combo("Jittering Metodo", (int*)&jitteringm, "Metodo1\0Metodo2", 2);
+	}
+	if (ImGui::TreeNode("Transfer Function")) {
+		ImGui::Checkbox("Transfer Function", &TF);
+	}
+	if (ImGui::TreeNode("Volume Clipping")) {
+		ImGui::Checkbox("Volume Clipping", &VC);
+		ImGui::DragFloat4("plane", (float*)&plane);
+	}
+	if (ImGui::TreeNode("Isosurface")) {
+		ImGui::Checkbox("IsoSurfaces", &isosurface);
+		ImGui::SliderFloat("Isosurface threshold", &iso_threshold, 0.01f, 5.f);
+		ImGui::SliderFloat("h value", &h_value, 0.01f, 0.1f);
+	}
+	ImGui::Combo("Volums", (int*)&volums, "CTABDOMEN\0ORANGE\0TEA", 3);
 }
