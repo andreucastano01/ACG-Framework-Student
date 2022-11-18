@@ -58,47 +58,58 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 
 	// TODO: create all the volumes to use in the app
 	//new VolumeNode(autoset a cube for the mesh of the class)
-	if (volums == CTABDOMEN) {
-		SceneNode* volumenode = new SceneNode("CTABDOMEN");
-		Mesh* mesh = new Mesh();
-		mesh->createCube();
-		volumenode->mesh = mesh;
-		//load Volume from dataset
-		Volume* volume = new Volume();
-		volume->loadPVM("data/volumes/CT-Abdomen.pvm");
-		//create Texture from Value
-		Texture* texture = new Texture();
-		texture->create3DFromVolume(volume, GL_REPEAT);
-		//create Material from Texture
-		VolumeMaterial* volumematerial = new VolumeMaterial();
-		volumematerial->texture = texture;
-		//set material of  the VolumeNode as the material created
-		volumenode->material = volumematerial;
-		//check that this is created node is used in the main render call
-		node_list.push_back(volumenode);
-	}
-	if (volums == ORANGE) {
-		SceneNode* volumenode = new SceneNode("Orange");
-		Mesh* mesh = new Mesh();
-		mesh->createCube();
-		volumenode->mesh = mesh;
-		//load Volume from dataset
-		Volume* volume = new Volume();
-		volume->loadPVM("data/volumes/Orange.pvm");
-		//create Texture from Value
-		Texture* texture = new Texture();
-		texture->create3DFromVolume(volume, GL_REPEAT);
-		//create Material from Texture
-		VolumeMaterial* volumematerial = new VolumeMaterial();
-		volumematerial->texture = texture;
-		//set material of  the VolumeNode as the material created
-		volumenode->material = volumematerial;
-		//check that this is created node is used in the main render call
-		node_list.push_back(volumenode);
-	}
+	SceneNode* abdomennode = new SceneNode("CTABDOMEN");
+	Mesh* mesh = new Mesh();
+	mesh->createCube();
+	abdomennode->mesh = mesh;
+	//load Volume from dataset
+	Volume* volume = new Volume();
+	volume->loadPVM("data/volumes/CT-Abdomen.pvm");
+	//create Texture from Value
+	Texture* texture = new Texture();
+	texture->create3DFromVolume(volume, GL_REPEAT);
+	//create Material from Texture
+	VolumeMaterial* volumematerial = new VolumeMaterial();
+	volumematerial->texture = texture;
+	//set material of  the VolumeNode as the material created
+	abdomennode->material = volumematerial;
+	//check that this is created node is used in the main render call
+	node_list.push_back(abdomennode);
+	
+	SceneNode* orangenode = new SceneNode("Orange");
+	orangenode->mesh = mesh;
+	//load Volume from dataset
+	Volume* orangevolume = new Volume();
+	orangevolume->loadPVM("data/volumes/Orange.pvm");
+	//create Texture from Value
+	Texture* orangetexture = new Texture();
+	orangetexture->create3DFromVolume(orangevolume, GL_REPEAT);
+	//create Material from Texture
+	VolumeMaterial* orangevolumematerial = new VolumeMaterial();
+	orangevolumematerial->texture = orangetexture;
+	//set material of  the VolumeNode as the material created
+	orangenode->material = orangevolumematerial;
+	//check that this is created node is used in the main render call
+	node_list.push_back(orangenode);
 
+	SceneNode* teanode = new SceneNode("Tea");
+	teanode->mesh = mesh;
+	//load Volume from dataset
+	Volume* teavolume = new Volume();
+	teavolume->loadPNG("data/volumes/teapot_16_16.png");
+	//create Texture from Value
+	Texture* teatexture = new Texture();
+	teatexture->create3DFromVolume(teavolume, GL_REPEAT);
+	//create Material from Texture
+	VolumeMaterial* teavolumematerial = new VolumeMaterial();
+	teavolumematerial->texture = teatexture;
+	//set material of  the VolumeNode as the material created
+	teanode->material = teavolumematerial;
+	//check that this is created node is used in the main render call
+	node_list.push_back(teanode);
+	
 	//LUTTexture
-	LUTtexture = new Texture(window_width, window_height, GL_RGB, GL_FLOAT, false);
+	LUTtexture = new Texture(window_width, 1, GL_RGB, GL_FLOAT, false);
 	LUTtexture->load("data/images/aaa.png");
 	//hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
@@ -121,7 +132,9 @@ void Application::render(void)
 	glDisable(GL_CULL_FACE);
 
 	for (size_t i = 0; i < node_list.size(); i++) {
-		node_list[i]->render(camera);
+		if (volums == i) {
+			node_list[i]->render(camera);
+		}
 
 		if(render_wireframe)
 			node_list[i]->renderWireframe(camera);
@@ -268,7 +281,7 @@ void Application::renderInMenu() {
 
 	ImGui::Checkbox("Render debug", &render_debug);
 	ImGui::Checkbox("Wireframe", &render_wireframe);
-	ImGui::Combo("Volums", (int*)&volums, "CTABDOMEN\0ORANGE", 2);
+	ImGui::Combo("Volums", (int*)&volums, "CTABDOMEN\0ORANGE\0TEA", 2);
 	ImGui::SliderFloat("Step Length", &step_length, 0.01f, 0.2f);
 	ImGui::SliderFloat("Brightness", &brightness, 0.01f, 5.f);
 	ImGui::DragFloat4("plane", (float*)&plane);

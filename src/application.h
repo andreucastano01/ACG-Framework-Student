@@ -38,7 +38,8 @@ public:
 
 	enum eVolums {
 		CTABDOMEN,
-		ORANGE
+		ORANGE,
+		TEA
 	};
 
 	eVolums volums;
