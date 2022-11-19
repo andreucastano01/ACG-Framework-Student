@@ -90,6 +90,12 @@ void VolumeMaterial::setUniforms(Camera* camera, Matrix44 model)
 		if(Application::instance->jitteringm == 1) shader->setUniform1("u_have_jittering_2", 1);
 		else shader->setUniform1("u_have_jittering_2", 0);
 	}
+
+	if (Application::instance->VC) shader->setUniform1("u_have_vc", 1);
+	else shader->setUniform1("u_have_vc", 0);
+
+	if (Application::instance->TF) shader->setUniform1("u_have_tf", 1);
+	else shader->setUniform1("u_have_tf", 0);
 }
 
 void VolumeMaterial::render(Mesh* mesh, Matrix44 model, Camera* camera)

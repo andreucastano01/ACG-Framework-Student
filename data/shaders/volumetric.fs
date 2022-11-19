@@ -1,6 +1,6 @@
 uniform vec3 u_camera_position;
 uniform sampler3D u_texture;
-uniform sampler1D LUT_texture;
+uniform sampler2D LUT_texture;
 uniform float ray_step;
 uniform float brightness;
 uniform mat4 u_inverse_model;
@@ -8,6 +8,8 @@ uniform float texture_width;
 uniform vec4 u_plane;
 uniform int u_have_jittering;
 uniform int u_have_jittering_2;
+uniform int u_have_vc;
+uniform int u_have_tf;
 
 varying vec3 v_position;
 varying vec3 v_world_position;
@@ -60,7 +62,7 @@ void main()
 	vec3 ray_dir = (sample_pos - ray_start);
     ray_dir = normalize(ray_dir);
     vec3 stepLength = ray_dir * ray_step;
-    
+    vec2 uv_LUT = vec2(1.0);
 
     //Sampleamos cada punto
     for(int i = 0; i < SAMPLES; i++){
@@ -68,14 +70,19 @@ void main()
         float d = texture(u_texture, samplepos01).x;
         vec4 sample_color = vec4(d,1-d,0,d*d);
 
-        //Calculamos color  
-        if(u_plane.x*sample_pos.x + u_plane.y*sample_pos.y + u_plane.z*sample_pos.z + u_plane.w > 0)
-            final_color += stepLength * (1.0 - final_color.a) * sample_color;
+        //Calculamos color
+        if (u_have_vc == 1){
+            if(u_plane.x*sample_pos.x + u_plane.y*sample_pos.y + u_plane.z*sample_pos.z + u_plane.w > 0)
+                final_color += stepLength * (1.0 - final_color.a) * sample_color;
+        }
+        else final_color += stepLength * (1.0 - final_color.a) * sample_color;
 
         //Intento de transfer function
-        //vec3 c = texture(LUT_texture, d).xyz;
-        //vec4 color = vec4(c, final_color.a);
-        //final_color = color;
+        if (u_have_tf == 1){
+            uv_LUT.x = final_color.a;
+            vec3 c = texture(LUT_texture, uv_LUT).xyz;
+            final_color.xyz = final_color.xyz * c;
+        }
 
         //Pasamos al siguiente sample
         sample_pos += stepLength;
