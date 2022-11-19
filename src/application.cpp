@@ -118,6 +118,8 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	//LUTTexture
 	LUTtexture = new Texture(window_width, 1, GL_RGB, GL_FLOAT, false);
 	LUTtexture->load("data/images/aaa.png");
+	noisetexture = new Texture(window_width, window_height, GL_RGB, GL_FLOAT, false);
+	noisetexture->load("data/images/blueNoise.png");
 	//hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
 }

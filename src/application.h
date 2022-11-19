@@ -42,6 +42,7 @@ public:
 	bool isosurface;
 
 	Texture* LUTtexture = NULL;
+	Texture* noisetexture = NULL;
 
 	enum eVolums {
 		CTABDOMEN,

@@ -1,6 +1,7 @@
 uniform vec3 u_camera_position;
 uniform sampler3D u_texture;
 uniform sampler2D LUT_texture;
+uniform sampler2D noise_texture;
 uniform float ray_step;
 uniform float brightness;
 uniform mat4 u_inverse_model;
@@ -52,7 +53,8 @@ void main()
     //Jittering
     if(u_have_jittering == 1){
         if(u_have_jittering_2 == 1){
-            vec2 offset = v_uv / texture_width;
+            vec2 uv_noise = v_uv / texture_width;
+            float offset = texture(noise_texture, uv_noise).x;
             ray_start += offset; 
         } else{
             ray_start += noise(v_uv);
