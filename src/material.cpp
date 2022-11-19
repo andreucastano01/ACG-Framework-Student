@@ -54,7 +54,7 @@ VolumeMaterial::VolumeMaterial()
 {
 	color = vec4(1.f, 1.f, 1.f, 1.f);
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/volumetric.fs");
-}
+}	
 
 VolumeMaterial::~VolumeMaterial()
 {
@@ -104,6 +104,8 @@ void VolumeMaterial::render(Mesh* mesh, Matrix44 model, Camera* camera)
 	glCullFace(GL_BACK);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	if (Application::instance->isosurface) shader = Shader::Get("data/shaders/basic.vs", "data/shaders/isosurface.fs");
+	else shader = Shader::Get("data/shaders/basic.vs", "data/shaders/volumetric.fs");
 	if (mesh && shader)
 	{
 		//enable shader
