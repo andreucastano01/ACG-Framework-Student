@@ -56,8 +56,15 @@ public:
 		METODO2
 	};
 
+	enum eTF {
+		TF1,
+		TF2,
+		TF3
+	};
+
 	eVolums volums;
 	eJittering jitteringm;
+	eTF tf;
 
 	// some vars
 	static Camera* camera; //our GLOBAL camera

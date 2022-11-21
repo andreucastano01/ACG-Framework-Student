@@ -27,12 +27,13 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	instance = this;
 	must_exit = false;
 	render_debug = true;
-	volums = CTABDOMEN;
+	volums = ORANGE;
 	jitteringm = METODO1;
+	tf = TF1;
 	step_length = 0.01f;
 	brightness = 2.65f;
 	plane = Vector4(1, 1, 1, 1);
-	iso_threshold = 0.07f;
+	iso_threshold = 0.2f;
 	h_value = 0.01f;
 	jittering = false;
 	TF = false;
@@ -117,8 +118,8 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	node_list.push_back(teanode);
 	
 	//LUTTexture
-	LUTtexture = new Texture(window_width, 1, GL_RGB, GL_FLOAT, false);
-	LUTtexture->load("data/images/TFtexture2.png");
+	LUTtexture = new Texture(window_width, 1, GL_RGBA, GL_FLOAT, false);
+	LUTtexture->load("data/images/TFtexture3.png");
 	noisetexture = new Texture(window_width, window_height, GL_RGB, GL_FLOAT, false);
 	noisetexture->load("data/images/blueNoise.png");
 	//hide the cursor
@@ -140,6 +141,16 @@ void Application::render(void)
 	// set flags
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
+
+	if (TF) {
+		for (int i = 0; i < 3; i++) {
+			if (i == tf) {
+				if (i == 0) LUTtexture->load("data/images/TFtexture3.png");
+				if (i == 1) LUTtexture->load("data/images/TFtexture2.png");
+				if (i == 2) LUTtexture->load("data/images/TFtexture6.png");
+			}
+		}
+	}
 
 	for (size_t i = 0; i < node_list.size(); i++) {
 		if (volums == i) {
@@ -299,6 +310,7 @@ void Application::renderInMenu() {
 	}
 	if (ImGui::TreeNode("Transfer Function")) {
 		ImGui::Checkbox("Transfer Function", &TF);
+		ImGui::Combo("TFTexture", (int*)&tf, "TF1\0TF2\0TF3", 3);
 	}
 	if (ImGui::TreeNode("Volume Clipping")) {
 		ImGui::Checkbox("Volume Clipping", &VC);
@@ -308,7 +320,7 @@ void Application::renderInMenu() {
 		ImGui::Checkbox("IsoSurfaces", &isosurface);
 		ImGui::SliderFloat("Isosurface threshold", &iso_threshold, 0.01f, 5.f);
 		ImGui::SliderFloat("h value", &h_value, 0.001f, 0.03f);
-		ImGui::SliderFloat3("Light position", (float*)&l_position, 0.0f, 10.0f);
+		ImGui::SliderFloat3("Light position", (float*)&l_position, -10.0f, 10.0f);
 	}
 	ImGui::Combo("Volums", (int*)&volums, "CTABDOMEN\0ORANGE\0TEA", 3);
 }

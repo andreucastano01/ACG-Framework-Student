@@ -18,29 +18,6 @@ varying vec4 v_color;
 
 const int SAMPLES = 1024;
 
-float random (vec2 co) {
-    return fract(sin(dot(co.xy, vec2(12.9898,78.233)))* 43758.5453123);
-}
-
-float noise (in vec2 st) {
-    vec2 i = floor(st);
-    vec2 f = fract(st);
-
-    // Four corners in 2D of a tile
-    float a = random(i);
-    float b = random(i + vec2(1.0, 0.0));
-    float c = random(i + vec2(0.0, 1.0));
-    float d = random(i + vec2(1.0, 1.0));
-
-    vec2 u = f * f * (3.0 - 2.0 * f);
-
-    return mix(a, b, u.x) +
-            (c - a)* u.y * (1.0 - u.x) +
-            (d - b) * u.x * u.y;
-}
-
-//Mirar slide coordinate systems mucho, parece que al crear variables no esta todo en las mismas coordenadas,
-//y el sample_pos tambien tenemos que cambiar coordenadas, anadir el otro early termination
 void main()
 {
     //Creamos variables y el rayo
@@ -67,6 +44,8 @@ void main()
             float z1 = texture(u_texture, vec3(samplepos01.xy, samplepos01.z + h_value)).x;
             float z2 = texture(u_texture, vec3(samplepos01.xy, samplepos01.z - h_value)).x;
             vec3 N = (1/(2*h_value))*vec3(x1 - x2, y1 - y2, z1 - z2);
+            
+            //Phong
             N = normalize(-N);
             vec3 L = sample_pos - l_position;
             L = normalize(L);
@@ -80,7 +59,6 @@ void main()
         //Pasamos al siguiente sample
         sample_pos += stepLength;
         //Early termination
-        if(sample_color.w >= iso_threshold) break;
         if(final_color.a >= 1) break;
         if(sample_pos.x > 1 || sample_pos.x < -1 || sample_pos.y > 1 || sample_pos.y < -1 || sample_pos.z > 1 || sample_pos.z < -1) break;
     }

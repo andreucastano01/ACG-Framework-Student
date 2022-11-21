@@ -41,49 +41,48 @@ float noise (in vec2 st) {
             (d - b) * u.x * u.y;
 }
 
-//Mirar slide coordinate systems mucho, parece que al crear variables no esta todo en las mismas coordenadas,
-//y el sample_pos tambien tenemos que cambiar coordenadas, anadir el otro early termination
 void main()
 {
     //Creamos variables y el rayo
     vec4 final_color = vec4(0.0);
     vec3 ray_start = u_camera_position;
     vec3 sample_pos = v_position;
-    vec3 ray_dir = (sample_pos - ray_start);
-    ray_dir = normalize(ray_dir);
     float offset = 1.0;
 
     //Jittering
     if(u_have_jittering == 1){
         if(u_have_jittering_met == 1){
-            vec2 uv_noise = gl_FragCoord.xy / texture_width;
+            vec2 uv_noise = v_uv / texture_width;
             uv_noise = uv_noise * 0.5 + 0.5;
             offset = texture(noise_texture, uv_noise).x;
-        } else{
+        } else {
             offset = noise(v_uv);
         }
     }
     
-    vec3 stepLength = ray_dir * ray_step * offset; //Mirar stepLength
+    vec3 ray_dir = (sample_pos - ray_start);
+    ray_dir = normalize(ray_dir);
+    vec3 stepLength = ray_dir * ray_step * offset;
     vec2 uv_LUT = vec2(1.0);
 
     //Sampleamos cada punto
     for(int i = 0; i < SAMPLES; i++){
         vec3 samplepos01 = sample_pos * 0.5 + 0.5;
         float d = texture(u_texture, samplepos01).x;
-        vec4 sample_color = vec4(d,1-d,0,d*d);
+        vec4 sample_color = vec4(d,d,d,d);
 
-        //Calculamos color
+        //Calculamos color + Volume Clipping
         if (u_have_vc == 1){
             if(u_plane.x*sample_pos.x + u_plane.y*sample_pos.y + u_plane.z*sample_pos.z + u_plane.w < 0)
-                final_color += stepLength * (1.0 - final_color.a) * sample_color;
+                final_color += ray_step * (1.0 - final_color.a) * sample_color;
         }
-        else final_color += stepLength * (1.0 - final_color.a) * sample_color;
+        else {
+            final_color += ray_step * (1.0 - final_color.a) * sample_color;
+        }
 
-        //Intento de transfer function
+        //transfer function
         if (u_have_tf == 1){
-            uv_LUT.x = final_color.a;
-            uv_LUT = uv_LUT * 0.5 + 0.5;
+            uv_LUT.x = d;
             vec3 c = texture(LUT_texture, uv_LUT).xyz;
             final_color.xyz = final_color.xyz * c;
         }
