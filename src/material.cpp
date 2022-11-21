@@ -76,28 +76,30 @@ void VolumeMaterial::setUniforms(Camera* camera, Matrix44 model)
 	shader->setUniform("u_color", color);
 	shader->setUniform("ray_step", Application::instance->step_length);
 	shader->setUniform("brightness", Application::instance->brightness);
-	if (texture) {
+	if (texture)
 		shader->setUniform("u_texture", texture, 1);
-		shader->setUniform("texture_width", texture->width);
-	}
 	if (Application::instance->LUTtexture)
 		shader->setUniform("LUT_texture", Application::instance->LUTtexture, 2);
-	if (Application::instance->noisetexture)
+	if (Application::instance->noisetexture) {
+		shader->setUniform("texture_width", Application::instance->LUTtexture->width);
 		shader->setUniform("noise_texture", Application::instance->LUTtexture, 3);
+	}
 	shader->setUniform("u_plane", Application::instance->plane);
 	
 	if (!Application::instance->jittering) shader->setUniform1("u_have_jittering", 0);
-	else {
-		shader->setUniform1("u_have_jittering", 1);
-		if(Application::instance->jitteringm == 1) shader->setUniform1("u_have_jittering_2", 1);
-		else shader->setUniform1("u_have_jittering_2", 0);
-	}
+	else shader->setUniform1("u_have_jittering", 1);
+	if (Application::instance->jitteringm == 1) shader->setUniform1("u_have_jittering_met", 1);
+	else shader->setUniform1("u_have_jittering_met", 0);
 
 	if (Application::instance->VC) shader->setUniform1("u_have_vc", 1);
 	else shader->setUniform1("u_have_vc", 0);
 
 	if (Application::instance->TF) shader->setUniform1("u_have_tf", 1);
 	else shader->setUniform1("u_have_tf", 0);
+
+	shader->setUniform("iso_threshold", Application::instance->iso_threshold);
+	shader->setUniform("h_value", Application::instance->h_value);
+	shader->setUniform("l_position", Application::instance->l_position);
 }
 
 void VolumeMaterial::render(Mesh* mesh, Matrix44 model, Camera* camera)

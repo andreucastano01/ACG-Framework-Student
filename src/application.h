@@ -35,6 +35,7 @@ public:
 	Vector4 plane;
 	float iso_threshold;
 	float h_value;
+	Vector3 l_position;
 
 	bool jittering;
 	bool TF;

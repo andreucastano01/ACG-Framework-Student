@@ -32,12 +32,13 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	step_length = 0.01f;
 	brightness = 2.65f;
 	plane = Vector4(1, 1, 1, 1);
-	iso_threshold = 0.2f;
+	iso_threshold = 0.07f;
 	h_value = 0.01f;
 	jittering = false;
 	TF = false;
 	VC = false;
 	isosurface = false;
+	l_position = Vector3(0, 0, 0);
 
 	fps = 0;
 	frame = 0;
@@ -117,7 +118,7 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	
 	//LUTTexture
 	LUTtexture = new Texture(window_width, 1, GL_RGB, GL_FLOAT, false);
-	LUTtexture->load("data/images/aaa.png");
+	LUTtexture->load("data/images/TFtexture2.png");
 	noisetexture = new Texture(window_width, window_height, GL_RGB, GL_FLOAT, false);
 	noisetexture->load("data/images/blueNoise.png");
 	//hide the cursor
@@ -306,7 +307,8 @@ void Application::renderInMenu() {
 	if (ImGui::TreeNode("Isosurface")) {
 		ImGui::Checkbox("IsoSurfaces", &isosurface);
 		ImGui::SliderFloat("Isosurface threshold", &iso_threshold, 0.01f, 5.f);
-		ImGui::SliderFloat("h value", &h_value, 0.01f, 0.1f);
+		ImGui::SliderFloat("h value", &h_value, 0.001f, 0.03f);
+		ImGui::SliderFloat3("Light position", (float*)&l_position, 0.0f, 10.0f);
 	}
 	ImGui::Combo("Volums", (int*)&volums, "CTABDOMEN\0ORANGE\0TEA", 3);
 }
