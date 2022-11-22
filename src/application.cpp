@@ -32,14 +32,14 @@ Application::Application(int window_width, int window_height, SDL_Window* window
 	tf = TF1;
 	step_length = 0.01f;
 	brightness = 2.65f;
-	plane = Vector4(1, 1, 1, 1);
+	plane = Vector4(1, 1, 31, 1);
 	iso_threshold = 0.2f;
 	h_value = 0.01f;
 	jittering = false;
 	TF = false;
 	VC = false;
 	isosurface = false;
-	l_position = Vector3(0, 0, 0);
+	l_position = Vector3(10, 0, 0);
 
 	fps = 0;
 	frame = 0;
