@@ -37,12 +37,15 @@ void main()
 
         //Calculamos color  
         if(sample_color.w >= iso_threshold){
-            float x1 = texture(u_texture, vec3(samplepos01.x + h_value, samplepos01.yz)).x;
-            float x2 = texture(u_texture, vec3(samplepos01.x - h_value, samplepos01.yz)).x;
-            float y1 = texture(u_texture, vec3(samplepos01.x, samplepos01.y + h_value, samplepos01.z)).x;
-            float y2 = texture(u_texture, vec3(samplepos01.x, samplepos01.y - h_value, samplepos01.z)).x;
-            float z1 = texture(u_texture, vec3(samplepos01.xy, samplepos01.z + h_value)).x;
-            float z2 = texture(u_texture, vec3(samplepos01.xy, samplepos01.z - h_value)).x;
+            vec3 samplepos01h = (sample_pos + vec3(h_value)) * 0.5 + 0.5;
+            float x1 = texture(u_texture, vec3(samplepos01h.x, samplepos01.yz)).x;
+            float y1 = texture(u_texture, vec3(samplepos01.x, samplepos01h.y, samplepos01.z)).x;
+            float z1 = texture(u_texture, vec3(samplepos01.xy, samplepos01h.z)).x;
+
+            samplepos01h = (sample_pos - vec3(h_value)) * 0.5 + 0.5;
+            float x2 = texture(u_texture, vec3(samplepos01h.x, samplepos01.yz)).x;
+            float y2 = texture(u_texture, vec3(samplepos01.x, samplepos01h.y, samplepos01.z)).x;
+            float z2 = texture(u_texture, vec3(samplepos01.xy, samplepos01h.z)).x;
             vec3 N = (1/(2*h_value))*vec3(x1 - x2, y1 - y2, z1 - z2);
             
             //Phong
